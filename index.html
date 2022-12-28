@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        <markup>
+            @('https://www.baidu.com', class:test, style:'color:red;')    \
+                #(5) TEST HEADING
+                !(test.com) PICTURE
+                +()  
+            bold() THIS IS BOLD
+            #(1) \
+                bold() \
+                    italic() NESTING AND NESTING
+            map() test
+        </markup>
+        <script type="module">
+            import * as Markup from './markup.js';
+            Markup.compileDocument();
+        </script>
+    </body>
+</html>
