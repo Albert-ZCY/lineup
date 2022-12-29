@@ -52,6 +52,13 @@ const ordinaryElements = {
     'title': 'title',
     'style': 'style',
     'script': 'script',
+    'ul': 'ul',
+    'li': 'li',
+    'ol': 'ol',
+    'table': 'table',
+    'cell': 'td',
+    'row': 'tr',
+    'headcell': 'th',
 };
 const ordinaryElementsDefault = {
     '#': 'size',
