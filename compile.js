@@ -59,17 +59,16 @@ function parseLine(line) {
     }
     let tagname = res[2];
     if (tagname) {
-        if (tagname in Const.ordinaryElements) {
-            let args = res[3];
-            let content = res[4];
-            let arglist = splitArgs(tagname, args);
-            if (content == Const.nestingSymbol) {
-                return {'tagname':tagname, 'arglist':arglist, 'content':[], 'indentIndex': indentIndex};
-            } else {
-                return {'tagname':tagname, 'arglist':arglist, 'content':content, 'indentIndex': indentIndex};
-            }
-        } else {
+        if (tagname in Const.notSupportedElements) {
             throw TypeError('Markup Parser does not support tagname "' + tagname + '".');
+        }
+        let args = res[3];
+        let content = res[4];
+        let arglist = splitArgs(tagname, args);
+        if (content == Const.nestingSymbol) {
+            return {'tagname':tagname, 'arglist':arglist, 'content':[], 'indentIndex': indentIndex};
+        } else {
+            return {'tagname':tagname, 'arglist':arglist, 'content':content, 'indentIndex': indentIndex};
         }
     } else {
         throw TypeError('Invalid Markup syntax: "' + line + '".');
@@ -79,25 +78,23 @@ function parseLine(line) {
 // 将程序语言组合成html代码
 function compose(node, arr=[]){
     for (let item of node) {
-        let htmltag = Const.ordinaryElements[item.tagname];
-        let content = item.content;
+        let htmltag, content;
+        if (Const.ordinaryElements[item.tagname]) { htmltag = Const.ordinaryElements[item.tagname];}
+        else { htmltag = item.tagname;}
+        content = item.content;
+        item.htmltag = htmltag;
+        // 对于h标签的解释
         if (htmltag == 'h') {
             htmltag = 'h' + item.arglist.size;
             item.htmltag = htmltag;
             delete item.arglist.size;
-        } else if (htmltag == 'a') {
-            item.arglist.href = item.arglist.link;
-            delete item.arglist.link;
-        } else if (['img', 'audio', 'video'].indexOf(htmltag) > -1) {
-            item.arglist.src = item.arglist.link;
-            delete item.arglist.link;
         }
-        let htmlarg = joinArgs(item.arglist);
+        let htmlarg = joinArgs(item.tagname, item.arglist);
         if (item.indentIndex < indentIndex) {
             while (item.indentIndex < indentIndex) {
                 indentIndex -= 1;
                 let obj = openNodeList.pop();
-                htmlcode += `${repeatString(Const.indentSymbol, obj.indentIndex)}</${obj.htmltag || Const.ordinaryElements[obj.tagname]}>\n`;
+                htmlcode += `${repeatString(Const.indentSymbol, obj.indentIndex)}</${obj.htmltag}>\n`;
             }
         }
         if (typeof content == 'string') {
@@ -134,11 +131,24 @@ function splitArgs(tagname, str) {
     return args;
 }
 
-function joinArgs(args) {
+function joinArgs(tagname, args) {
+    // html参数书写 支持新的东西
     let res = '';
     for (let arg in args) {
+        let argtr;
         let value = args[arg];
-        let temp = ' ' + arg + '=' + '"' + value + '"';
+        if (Const.argNameTranslate[tagname] &&
+            Const.argNameTranslate[tagname][arg]) {
+            argtr = Const.argNameTranslate[tagname][arg];
+        } else {
+            argtr = arg;
+        }
+        if (Const.argValueTranslate[tagname] && 
+            Const.argValueTranslate[tagname][arg] && 
+            Const.argValueTranslate[tagname][arg][value]) {
+            value = Const.argValueTranslate[tagname][arg][value]; 
+        }
+        let temp = ' ' + argtr + '=' + '"' + value + '"';
         res += temp;
     }
     return res;

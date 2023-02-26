@@ -22,7 +22,7 @@
             #(2) 下载和使用
             p() \
                 span() 可以在
-                @("https://gitee.com/albert_zhong/lineup", target:_blank) https://gitee.com/albert_zhong/Lineup
+                @("https://gitee.com/albert_zhong/lineup", target:new) https://gitee.com/albert_zhong/lineup
                 span() 下载Lineup最新版本的源代码。
             p() 以在HTML文件中引用为例。将所有源代码置于HTML文件的同一层级。在文件中body标签最后以module形式引入Lineup.js，并编译所有dom内容。
             pre() \
@@ -70,8 +70,6 @@ const ordinaryElements = {
     '!': 'img',
     '+': 'br',
     '-': 'hr',
-    'audio': 'audio',
-    'video': 'video',
     'bold': 'b',
     'italic': 'i',
     'under': 'u',
