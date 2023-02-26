@@ -31,7 +31,7 @@ const argNameTranslate = {
     'video': {'link': 'src'},
 };
 const argValueTranslate = {
-    '@': {'target': {'_blank': 'new'}}
+    '@': {'target': {'new': '_blank', 'self': '_self'}}
 };
 const argsSplitSymbol = ',';
 const argsDefineSymbol = ':';
