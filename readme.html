@@ -31,7 +31,6 @@
             pre() \
                 code() &lt;Lineup&gt;#(1) TEST HEADING&lt;/Lineup&gt;
             p() lineup.js和compile.js中还提供了生成语法树、组合HTML、编译成字符的底层和封装函数，可以在前端或Node.js中导入并调用。
-            p() 如果不具备CORS配置，可能无法运行module。还可以通过这种方式导入lineup-min.js文件。
 
             #(2) Lineup语法
 
@@ -121,22 +120,13 @@ const ordinaryElements = {
 };
             </code>
         </pre>
-        <!-- <script type="module">
+        <script type="module">
             import * as Lineup from './lineup.js';
             Lineup.compileDocument();
             document.addEventListener('DOMContentLoaded', (event) => {
                 document.querySelectorAll('code').forEach((el) => {
                     hljs.highlightElement(el);
                 });
-            });
-        </script> -->
-        <script src="lineup-min.js"></script>
-        <script>
-            Lineup.compileDocument();
-            document.addEventListener('DOMContentLoaded', (event) => {
-                    document.querySelectorAll('code').forEach((el) => {
-                        hljs.highlightElement(el);
-                    });
             });
         </script>
     </body>
