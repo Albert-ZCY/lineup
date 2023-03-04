@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="utf-8" />
         <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/default.min.css">
         <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
     </head>
     <body>
-        <lineup>
+        <lineup style="display: none;">
             #(1) README
             italic() 内容由Lineup前端编译器生成
 
@@ -20,11 +21,10 @@
                 li() 开放：开源项目，支持二次创作，语法可扩展，仅修改常量文件就能定制出自己的编译器
 
             #(2) 下载和使用
+            p() 可以在{ @("https://gitee.com/albert_zhong/lineup", target:new) https://gitee.com/albert_zhong/lineup }下载Lineup最新版本的源代码。
             p() \
-                span() 可以在
-                @("https://gitee.com/albert_zhong/lineup", target:new) https://gitee.com/albert_zhong/lineup
-                span() 下载Lineup最新版本的源代码。
-            p() 以在HTML文件中引用为例。将所有源代码置于HTML文件的同一层级。在文件中body标签最后以module形式引入Lineup.js，并编译所有dom内容。
+                () 以在HTML文件中引用为例。将所有源代码置于HTML文件的同一层级。在文件中body标签最后以module形式引入Lineup.js，并编译所有dom内容。
+                () 本站长期提供cdn链接（{@("http://lib.albertz.top/lineup/lineup.js", target:new) http://lib.albertz.top/lineup/lineup.js }），使用可以避免CORS问题。
             pre() \
                 code() &lt;script type="module"&gt; import * as Lineup from './Lineup.js'; Lineup.compileDocument(); &lt;/script&gt;
             p() 之后即可在script标签以上的部分的Lineup标签内直接插入Lineup代码。打开页面时，编译器会自动将Lineup标签内的内容转化为HTML。这个过程几乎没有耗时。
@@ -36,19 +36,17 @@
 
             #(3) 元素定义
             p() \
-                span() 元素定义的基本语法为 
-                code() 元素名(参数) 内容
-                span() 。其中参数是可选的，但必须保留圆括号。元素名和内容是必须的。元素名仅可以是Lineup支持的元素。内容部分不得留空，元素必须在一行内完成定义，否则可能导致编译错误。
-            pre() <code>#(1) TEST HEADING</code><code>p(class:content) THE CONTENT</code>
+                () 元素定义的基本语法为 { code() 元素名(参数) 内容 }。
+                () 其中参数是可选的，但必须保留圆括号。元素名是可选的，默认为span。内容是必须的。元素名仅可以是Lineup支持的元素。内容部分不得留空，元素必须在一行内完成定义，否则可能导致编译错误。
+            pre() { code() #(1) TEST HEADING }{ code() p(class:content) THE CONTENT }{ code() () inline }
             p() 一般情况下，Lineup元素名与html标签名称相同。但对于常用标签，为了便于理解记忆，引入了特殊符号和不同的文字表达。
             @(#ele-table) 具体对应关系如文末常量信息对象。
 
             #(3) 参数属性
             p() \
-                span() 参数的基本语法为 
-                code() 默认属性值，属性名：属性值，属性名：属性值...
-                span() 。默认属性名可以写出，也可以不写出。每个元素至多有一个默认属性。顺序对编译没有影响，但推荐将默认属性写在首个。
-                span() '@''!''audio''video'元素有默认属性'link'，'#'元素有默认属性'size'，对应1-6的数字，表示标题层级。
+                () 参数的基本语法为 {code() 默认属性值，属性名：属性值，属性名：属性值...}。
+                () 默认属性名可以写出，也可以不写出。每个元素至多有一个默认属性。顺序对编译没有影响，但推荐将默认属性写在首个。
+                () '@''!''audio''video'元素有默认属性'link'，'#'元素有默认属性'size'，对应1-6的数字，表示标题层级。
             pre() <code>#(2,class:name) TEST HEADING</code><code>@(link:#anchor) TEST ANCHOR</code></code><code>p(id:test,style:"color:red") THE CONTENT</code>
 
             #(3) 特殊符号
@@ -60,6 +58,12 @@
             p() 嵌套标识符'\'表示嵌套的开始。在父级元素的内容部分使用这一符号。需要注意，标识符前只可以为空格，标识符后不能有任何字符（包括空格），否则编译器可能无法识别。
             p() 在需要被嵌套的子元素前增加一次缩进层级。嵌套的结束之处无需标识，只需要减少一次缩进层级。需要注意，缩进是强制的，但编译器不会做缩进检查。不正确的缩进可能导致意想不到的错误。
             pre() <code>div() \</code><code>&emsp;&emsp;&emsp;&emsp;#(1) THE HEADING</code></code><code>&emsp;&emsp;&emsp;&emsp;p() \</code><code>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;@(#anchor) TEST ANCHOR</code><code>&emsp;&emsp;&emsp;&emsp;p() CONTENT</code><code>div() FOOTER</code>
+
+            #(3) 内联元素
+            p() \
+                () 内联元素的基本语法为 {code() \{ 元素定义式 \}}。其他内容中若有'\{'或'\}'符号，必须用'\'转义。
+            pre() { code() 内联语法示例 \{ p() 这是一段代码 \} }
+
         </lineup>
         <pre>
             <a id="ele-table"><h3>附：元素名称对象</h3></a>

@@ -17,6 +17,12 @@ function compile(code) {
     return code;
 }
 
+function compileInline(code) {
+    let item = parseLine(code, true);
+    code = compose(item, true);
+    return code;
+}
+
 function parse(code) {
     // 用一个奇奇怪怪的原创方法实现的数结构遍历 把所有代码根据缩进转换成语法树的结构
     let lines = code.split('\n');
@@ -50,33 +56,70 @@ function parse(code) {
 }
 
 // 转译为参数性的程序语言
-function parseLine(line) {
+function parseLine(line, inline=false) {
     let res = line.match(Const.ordinaryElementRE); //ordinary element
+    if (inline) {
+        let tagname = res[2];
+        if (!tagname) {
+            tagname = Const.defaultTagname;
+        }
+        if (Const.notSupportedElements.indexOf(tagname) > -1) {
+            throw TypeError('Markup Parser does not support tagname "' + tagname + '".');
+        }
+        let args = res[3];
+        let content = res[4];
+        let arglist = splitArgs(tagname, args);
+        return {'tagname':tagname, 'arglist':arglist, 'content':content, 'indentIndex': 1};
+    }
     let indent = res[1];
     let indentIndex = indent.length / Const.indentSymbol.length;
     if (indentIndex%1 != 0) {
         throw TypeError('Markup Parser only suppor "    " as indent symbol.');
     }
     let tagname = res[2];
-    if (tagname) {
-        if (tagname in Const.notSupportedElements) {
-            throw TypeError('Markup Parser does not support tagname "' + tagname + '".');
-        }
-        let args = res[3];
-        let content = res[4];
-        let arglist = splitArgs(tagname, args);
-        if (content == Const.nestingSymbol) {
-            return {'tagname':tagname, 'arglist':arglist, 'content':[], 'indentIndex': indentIndex};
-        } else {
-            return {'tagname':tagname, 'arglist':arglist, 'content':content, 'indentIndex': indentIndex};
-        }
+    if (!tagname) {
+        tagname = Const.defaultTagname;
+    }
+    if (Const.notSupportedElements.indexOf(tagname) > -1) {
+        throw TypeError('Markup Parser does not support tagname "' + tagname + '".');
+    }
+    let args = res[3];
+    let content = res[4];
+    let arglist = splitArgs(tagname, args);
+    if (content == Const.nestingSymbol) {
+        return {'tagname':tagname, 'arglist':arglist, 'content':[], 'indentIndex': indentIndex};
     } else {
-        throw TypeError('Invalid Markup syntax: "' + line + '".');
+        // 对于内联元素的解析
+        while (true){
+            let res = content.match(Const.inlineElementRE);
+            if (!res) break
+            let code = res[1];
+            let codeCompiled = compileInline(code.trim());
+            content = content.replace(res[0], codeCompiled);
+        }
+        return {'tagname':tagname, 'arglist':arglist, 'content':content, 'indentIndex': indentIndex};
     }
 }
 
 // 将程序语言组合成html代码
-function compose(node, arr=[]){
+function compose(node, inline=false){
+    if (inline) {
+        let item = node;
+        let htmltag, content;
+        if (Const.ordinaryElements[item.tagname]) { htmltag = Const.ordinaryElements[item.tagname];}
+        else { htmltag = item.tagname;}
+        content = item.content;
+        item.htmltag = htmltag;
+        // 对于h标签的解释
+        if (htmltag == 'h') {
+            htmltag = 'h' + item.arglist.size;
+            item.htmltag = htmltag;
+            delete item.arglist.size;
+        }
+        let htmlarg = joinArgs(item.tagname, item.arglist);
+        let code = `<${htmltag}${htmlarg}>${content}</${htmltag}>\n`;
+        return code;
+    }
     for (let item of node) {
         let htmltag, content;
         if (Const.ordinaryElements[item.tagname]) { htmltag = Const.ordinaryElements[item.tagname];}
@@ -98,6 +141,7 @@ function compose(node, arr=[]){
             }
         }
         if (typeof content == 'string') {
+            content = content.replaceAll('\\{', '{').replaceAll('\\}', '}');
             htmlcode += `${repeatString(Const.indentSymbol, item.indentIndex)}<${htmltag}${htmlarg}>${content}</${htmltag}>\n`;
             indentIndex = item.indentIndex;
         } else if (typeof content != 'string') {
@@ -106,7 +150,7 @@ function compose(node, arr=[]){
             indentIndex = item.indentIndex;
         }
         if (item.content && typeof item.content != 'string' && item.content.length) 
-            compose(item.content, arr);
+            compose(item.content);
     }
     return htmlcode;
 }
@@ -123,9 +167,9 @@ function splitArgs(tagname, str) {
             // 采用slice 从第一个定义符的位置分割字符串成两个部分
             args[temp.slice(0,temp.indexOf(Const.argsDefineSymbol))] = 
                 temp.slice(temp.indexOf(Const.argsDefineSymbol)+1)
-                .replace(/^(\s|"|')+|(\s|"|')+$/g, '');
+                .replace(Const.quoteRE, '');
         } else if (Const.ordinaryElementsDefault[tagname]) {
-            args[Const.ordinaryElementsDefault[tagname]] = temp.replace(/^(\s|"|')+|(\s|"|')+$/g, '');
+            args[Const.ordinaryElementsDefault[tagname]] = temp.replace(Const.quoteRE, '');
         }
     }
     return args;

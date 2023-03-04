@@ -3,6 +3,8 @@
 // ordinary element: [sym]([args]) [content]
 
 const ordinaryElementRE = /(\s*)(.*?)\((.*?)\)\s+(.*)/;
+const inlineElementRE = /(?<!\\){(.*?)(?<!\\)}/;
+const quoteRE = /^(\s|"|')+|(\s|"|')+$/g;
 const ordinaryElements = {
     '@': 'a',
     '#': 'h',
@@ -33,6 +35,7 @@ const argNameTranslate = {
 const argValueTranslate = {
     '@': {'target': {'new': '_blank', 'self': '_self'}}
 };
+const defaultTagname = 'span';
 const argsSplitSymbol = ',';
 const argsDefineSymbol = ':';
 const nestingSymbol = '\\';
@@ -40,10 +43,13 @@ const indentSymbol = '    ';
 
 export {
     ordinaryElementRE,
+    inlineElementRE,
+    quoteRE,
     ordinaryElements,
     ordinaryElementsDefault,
     notSupportedElements,
     argNameTranslate,
+    defaultTagname,
     argValueTranslate,
     argsSplitSymbol,
     argsDefineSymbol,
