@@ -1,8 +1,8 @@
 // Const Define
 // by Albert Z
 // ordinary element: [sym]([args]) [content]
-
 const ordinaryElementRE = /(\s*)(.*?)\((.*?)\)\s+(.*)/;
+// inline element: { [element defination] }
 const inlineElementRE = /(?<!\\){(.*?)(?<!\\)}/;
 const quoteRE = /^(\s|"|')+|(\s|"|')+$/g;
 const ordinaryElements = {

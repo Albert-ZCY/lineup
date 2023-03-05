@@ -4,6 +4,7 @@
         <meta charset="utf-8" />
         <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/default.min.css">
         <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+        <script src="lineup-min.js"></script>
     </head>
     <body>
         <lineup style="display: none;">
@@ -26,11 +27,15 @@
                 () 以在HTML文件中引用为例。将所有源代码置于HTML文件的同一层级。在文件中body标签最后以module形式引入Lineup.js，并编译所有dom内容。
                 () 本站长期提供cdn链接（{@("http://lib.albertz.top/lineup/lineup.js", target:new) http://lib.albertz.top/lineup/lineup.js }），使用可以避免CORS问题。
             pre() \
-                code() &lt;script type="module"&gt; import * as Lineup from './Lineup.js'; Lineup.compileDocument(); &lt;/script&gt;
+                code() &lt;script type="module"&gt; import * as Lineup from './lineup.js'; Lineup.compileDocument(); &lt;/script&gt;
             p() 之后即可在script标签以上的部分的Lineup标签内直接插入Lineup代码。打开页面时，编译器会自动将Lineup标签内的内容转化为HTML。这个过程几乎没有耗时。
             pre() \
-                code() &lt;Lineup&gt;#(1) TEST HEADING&lt;/Lineup&gt;
+                code() &lt;lineup&gt;#(1) TEST HEADING&lt;/lineup&gt;
             p() lineup.js和compile.js中还提供了生成语法树、组合HTML、编译成字符的底层和封装函数，可以在前端或Node.js中导入并调用。
+            p() 如果想要避免不必要的cors问题和import不支持的问题，建议使用lineup-min.js的纯代码版本。代码由作者自己编写的link.py插件生成，完全等价于module版本。用以下代码导入：
+            pre() \
+                code() &lt;script src="lineup-min.js"&gt;&lt;/script&gt;&lt;script&gt;Lineup.compileDocument(); &lt;/script&gt;
+            p() 本站长期提供cdn链接（{@("http://lib.albertz.top/lineup/lineup-min.js", target:new) http://lib.albertz.top/lineup/lineup-min.js }）。
 
             #(2) Lineup语法
 
@@ -65,8 +70,8 @@
             pre() { code() 内联语法示例 \{ p() 这是一段代码 \} }
 
         </lineup>
+        <a id="ele-table"><h3>附：常量信息</h3></a>
         <pre>
-            <a id="ele-table"><h3>附：元素名称对象</h3></a>
             <code>
 const ordinaryElements = {
     '@': 'a',
@@ -77,55 +82,35 @@ const ordinaryElements = {
     'bold': 'b',
     'italic': 'i',
     'under': 'u',
-    'abbr': 'abbr',
-    'address': 'address',
-    'area': 'area',
-    'bdi': 'bdi',
-    'bdo': 'bdo',
-    'cite': 'cite',
-    'button': 'button',
-    'canvas': 'canvas',
-    'caption': 'caption',
-    'code': 'code',
-    'col': 'col',
-    'del': 'del',
-    'div': 'div',
-    'dialog': 'dialog',
-    'embed': 'embed',
-    'figure': 'figure',
-    'footer': 'footer',
-    'form': 'form',
-    'header': 'header',
-    'iframe': 'iframe',
-    'input': 'input',
-    'label': 'label',
-    'main': 'main',
-    'map': 'map',
-    'noscript': 'noscript',
-    'object': 'object',
-    'p': 'p',
-    'pre': 'pre',
-    'select': 'select',
-    'span': 'span',
-    'sub': 'sub',
-    'sup': 'sup',
-    'svg': 'svg',
-    'time': 'time',
-    'title': 'title',
-    'style': 'style',
-    'script': 'script',
-    'ul': 'ul',
-    'li': 'li',
-    'ol': 'ol',
-    'table': 'table',
     'cell': 'td',
     'row': 'tr',
     'headcell': 'th',
 };
+const notSupportedElements = [];
+const ordinaryElementsDefault = {
+    '#': 'size',
+    '@': 'link',
+    '!': 'link',
+    'audio': 'link',
+    'video': 'link',
+};
+const argNameTranslate = {
+    '@': {'link': 'href'},
+    '!': {'link': 'src'},
+    'audio': {'link': 'src'},
+    'video': {'link': 'src'},
+};
+const argValueTranslate = {
+    '@': {'target': {'new': '_blank', 'self': '_self'}}
+};
+const defaultTagname = 'span';
+const argsSplitSymbol = ',';
+const argsDefineSymbol = ':';
+const nestingSymbol = '\\';
+const indentSymbol = '    ';
             </code>
         </pre>
-        <script type="module">
-            import * as Lineup from './lineup.js';
+        <script>
             Lineup.compileDocument();
             document.addEventListener('DOMContentLoaded', (event) => {
                 document.querySelectorAll('code').forEach((el) => {
