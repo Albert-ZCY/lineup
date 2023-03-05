@@ -19,7 +19,7 @@ function compileDocument(replaceTag=true) {
 }
 
 function compileHTML(code, head='<meta charset="utf-8">') {
-    let code = compile(code);
+    code = compile(code);
     let htmlcode = `
 <!DOCTYPE html>
 <html>
@@ -35,7 +35,7 @@ function compileHTML(code, head='<meta charset="utf-8">') {
 } 
 
 function compileXML(code, head='<?xml version="1.0" encoding="utf-8"?>') {
-    let code = compile(code);
+    code = compile(code);
     let xmlcode = `
 ${head}
 ${code}
