@@ -287,7 +287,34 @@ function compileDocument(replaceTag=true) {
     }
 }
 
+function compileHTML(code, head='<meta charset="utf-8">') {
+    let code = compile(code);
+    let htmlcode = `
+<!DOCTYPE html>
+<html>
+    <head>
+        ${head}
+    </head>
+    <body>
+        ${code}
+    </body>
+</html>
+`;
+    return htmlcode;
+} 
+
+function compileXML(code, head='<?xml version="1.0" encoding="utf-8"?>') {
+    let code = compile(code);
+    let xmlcode = `
+${head}
+${code}
+`;
+    return xmlcode
+}
+
 const Lineup = {
     compile: compile,
     compileDocument: compileDocument,
+    compileHTML: compileHTML,
+    compileXML: compileXML,
 }
