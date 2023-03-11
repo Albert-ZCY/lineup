@@ -1,4 +1,4 @@
-/* automatically linked by link.py */
+/* automatically linked by JLinker */
 // Const Define
 // by Albert Z
 // ordinary element: [sym]([args]) [content]
@@ -60,6 +60,7 @@ const Const = {
 // the currency version of node and ecmascript
 // by Albert Z
 // include as type 'module'
+// THE CORE CODE
 
 
 

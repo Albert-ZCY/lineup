@@ -1,6 +1,7 @@
 // the currency version of node and ecmascript
 // by Albert Z
 // include as type 'module'
+// THE CORE CODE
 
 import * as Const from './syntax/const.js';
 
