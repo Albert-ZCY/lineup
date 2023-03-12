@@ -49,3 +49,7 @@ export {
     compileHTML,
     compileXML,
 }
+
+export default {
+    name: 'Lineup'
+}

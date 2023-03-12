@@ -319,3 +319,7 @@ const Lineup = {
     compileHTML: compileHTML,
     compileXML: compileXML,
 }
+
+Lineup.default = { 
+    name: 'Lineup'
+ }
