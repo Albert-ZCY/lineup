@@ -5,6 +5,20 @@ moduleStruct = {}
 
 # 模块转代码
 def exportToObject(name, code, imports='*'):
+    """
+    # Function
+    处理单文件导入导出语句
+    Process the import and export syntax of a single file
+
+    # Argument
+    |  arg   |    内容     |     content      |
+    |  name  |   模块名称   |    module name   |
+    |  main  |   代码内容   |  javascript code |
+    |*imports|   导入内容   | imported objects |
+
+    # Return
+    code: 已转换的代码
+    """
     # 删掉import
     code = re.sub('(import .*?;)', '', code, re.S)
     # 将export语句变为object
@@ -31,6 +45,22 @@ def exportToObject(name, code, imports='*'):
     return code + '\n'
 
 def linkFiles(module:dict, output):
+    """
+    # Function
+    提供模块结构，组合模块至单文件。
+    Read the module struct dict and compose the module into a single file.
+
+    # Argument
+    |  arg   |    内容     |     content      |
+    |  name  |   模块结构   |   module struct  |
+    | output |   输出文件   | output file path |
+    
+    module: {path:name, path:[imports] *}
+
+    # Example 
+    JLinker.linkFiles({'imports/tool.js': ['fun1', 'fun2', 'd'], 'import/network.js': 'Network',
+                       './index.js': 'ModuleName', }, './singlefile.js')
+    """
     # {path:name, path:[imports] *}
     codeAll = '/* automatically linked by JLinker */\n'
     for path in module:
@@ -46,6 +76,17 @@ def linkFiles(module:dict, output):
         f.write(codeAll)
 
 def linkModule(name, main, output):
+    """
+    # Function
+    仅分析入口文件，组合模块至单文件。
+    Analyse the index file and compose the module into a single file.
+    
+    # Argument
+    |  arg   |    内容     |     content      |
+    |  name  |  模块总名称  |    module name   |
+    |  main  |   入口文件   |  index file path |
+    | output |   输出文件   | output file path |
+    """
     global moduleStruct
     moduleStruct = {main: name}
     analyseCode(main)
@@ -54,6 +95,15 @@ def linkModule(name, main, output):
 
 
 def analyseCode(path):
+    """
+    # Function
+    分析文件导入和包含关系
+    Analyse the file into module struct.
+
+    # Argument
+    |  arg   |    内容     |     content      |
+    |  main  |   入口文件   |  index file path |
+    """
     global moduleStruct
     code = open(path, 'r').read()
     res = re.findall('import\s+\*\s+as\s+(.*?)\s+from\s+(.*?)\s*;', code, re.S)
