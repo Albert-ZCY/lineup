@@ -1,2 +1,0 @@
-node parse.js
-pause
